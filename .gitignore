@@ -1,0 +1,8 @@
+# Code::Blocks
+bin/
+obj/
+*.depend
+*.layout
+
+# Ejecutables sueltos
+*.exe
