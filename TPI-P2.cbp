@@ -18,7 +18,7 @@
 			<Target title="Release">
 				<Option output="bin\Release\TPI-P2" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj\Release\" />
-				<Option type="0" />
+				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-O2" />
@@ -31,19 +31,99 @@
 		<Compiler>
 			<Add option="-Wall" />
 			<Add option="-std=c++17" />
+			<Add directory="dominio" />
+			<Add directory="persistencia" />
+			<Add directory="presentacion" />
 			<Add directory="SDL2\include\SDL2" />
 		</Compiler>
 		<Linker>
 			<Add option="-static-libgcc" />
 			<Add option="-static-libstdc++" />
+			<Add option="-Wl,-Bstatic,--whole-archive -lwinpthread -Wl,--no-whole-archive,-Bdynamic" />
 			<Add library="mingw32" />
-			<Add library="SDL2main" />
 			<Add library="SDL2" />
 			<Add library="SDL2_image" />
 			<Add library="SDL2_ttf" />
 			<Add directory="SDL2\lib" />
 		</Linker>
 		<Unit filename="main.cpp" />
+		<Unit filename="dominio\Arma.cpp" />
+		<Unit filename="dominio\Arma.h" />
+		<Unit filename="dominio\Armadura.cpp" />
+		<Unit filename="dominio\Armadura.h" />
+		<Unit filename="dominio\Celda.cpp" />
+		<Unit filename="dominio\Celda.h" />
+		<Unit filename="dominio\Combate.cpp" />
+		<Unit filename="dominio\Combate.h" />
+		<Unit filename="dominio\Curacion.cpp" />
+		<Unit filename="dominio\Curacion.h" />
+		<Unit filename="dominio\Desafio.cpp" />
+		<Unit filename="dominio\Desafio.h" />
+		<Unit filename="dominio\Enemigo.cpp" />
+		<Unit filename="dominio\Enemigo.h" />
+		<Unit filename="dominio\Entidad.cpp" />
+		<Unit filename="dominio\Entidad.h" />
+		<Unit filename="dominio\Enumeradores.h" />
+		<Unit filename="dominio\Estadisticas.cpp" />
+		<Unit filename="dominio\Estadisticas.h" />
+		<Unit filename="dominio\Fecha.cpp" />
+		<Unit filename="dominio\Fecha.h" />
+		<Unit filename="dominio\GeneradorLaberinto.cpp" />
+		<Unit filename="dominio\GeneradorLaberinto.h" />
+		<Unit filename="dominio\Inventario.cpp" />
+		<Unit filename="dominio\Inventario.h" />
+		<Unit filename="dominio\Item.cpp" />
+		<Unit filename="dominio\Item.h" />
+		<Unit filename="dominio\Laberinto.cpp" />
+		<Unit filename="dominio\Laberinto.h" />
+		<Unit filename="dominio\Minotauro.cpp" />
+		<Unit filename="dominio\Minotauro.h" />
+		<Unit filename="dominio\Nivel.cpp" />
+		<Unit filename="dominio\Nivel.h" />
+		<Unit filename="dominio\Personaje.cpp" />
+		<Unit filename="dominio\Personaje.h" />
+		<Unit filename="dominio\Posicion.cpp" />
+		<Unit filename="dominio\Posicion.h" />
+		<Unit filename="dominio\Reliquia.cpp" />
+		<Unit filename="dominio\Reliquia.h" />
+		<Unit filename="persistencia\ArchivoAcertijos.cpp" />
+		<Unit filename="persistencia\ArchivoAcertijos.h" />
+		<Unit filename="persistencia\ArchivoEnemigos.cpp" />
+		<Unit filename="persistencia\ArchivoEnemigos.h" />
+		<Unit filename="persistencia\ArchivoItems.cpp" />
+		<Unit filename="persistencia\ArchivoItems.h" />
+		<Unit filename="persistencia\ArchivoJugadores.cpp" />
+		<Unit filename="persistencia\ArchivoJugadores.h" />
+		<Unit filename="persistencia\ArchivoNiveles.cpp" />
+		<Unit filename="persistencia\ArchivoNiveles.h" />
+		<Unit filename="persistencia\ArchivoPartidas.cpp" />
+		<Unit filename="persistencia\ArchivoPartidas.h" />
+		<Unit filename="persistencia\RegistroAcertijo.cpp" />
+		<Unit filename="persistencia\RegistroAcertijo.h" />
+		<Unit filename="persistencia\RegistroEnemigo.cpp" />
+		<Unit filename="persistencia\RegistroEnemigo.h" />
+		<Unit filename="persistencia\RegistroItem.cpp" />
+		<Unit filename="persistencia\RegistroItem.h" />
+		<Unit filename="persistencia\RegistroJugador.cpp" />
+		<Unit filename="persistencia\RegistroJugador.h" />
+		<Unit filename="persistencia\RegistroNivel.cpp" />
+		<Unit filename="persistencia\RegistroNivel.h" />
+		<Unit filename="persistencia\RegistroPartida.cpp" />
+		<Unit filename="persistencia\RegistroPartida.h" />
+		<Unit filename="presentacion\Fuente.cpp" />
+		<Unit filename="presentacion\Fuente.h" />
+		<Unit filename="presentacion\Juego.cpp" />
+		<Unit filename="presentacion\Juego.h" />
+		<Unit filename="presentacion\Menu.cpp" />
+		<Unit filename="presentacion\Menu.h" />
+		<Unit filename="presentacion\MenuAdministracion.cpp" />
+		<Unit filename="presentacion\MenuAdministracion.h" />
+		<Unit filename="presentacion\Pantalla.cpp" />
+		<Unit filename="presentacion\Pantalla.h" />
+		<Unit filename="presentacion\Sprite.cpp" />
+		<Unit filename="presentacion\Sprite.h" />
+		<Unit filename="presentacion\Validador.cpp" />
+		<Unit filename="presentacion\Validador.h" />
 		<Extensions>
 			<code_completion />
 			<debugger />
