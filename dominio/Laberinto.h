@@ -24,6 +24,8 @@ public:
     Posicion buscar(TipoCelda tipo);
 
 private:
+    int getIndice(Posicion posicion);           /// fila * _columnas + columna
+
     Celda *_celdas;
     int _filas;
     int _columnas;
