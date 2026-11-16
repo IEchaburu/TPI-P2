@@ -6,3 +6,7 @@ obj/
 
 # Ejecutables sueltos
 *.exe
+
+# Datos que genera el juego al jugar (los .dat de contenido si se suben)
+Jugadores.dat
+Partidas.dat
