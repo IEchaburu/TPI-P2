@@ -2,7 +2,7 @@
 #include <string>
 #include "Pantalla.h"
 
-struct _TTF_Font;   /// es el TTF_Font de SDL_ttf
+struct TTF_Font;    /// declaracion adelantada: asi quien incluye Fuente.h no ve SDL_ttf.h
 
 /// Dibuja texto con una fuente TTF (fuentes/PressStart2P-Regular.ttf). La cierra en el destructor.
 /// Referencia para implementarla: el main.cpp del primer commit (TTF_OpenFont, TTF_RenderUTF8_Blended).
@@ -19,5 +19,5 @@ public:
     int medirAncho(std::string texto);    /// en pixeles, para centrar
 
 private:
-    _TTF_Font *_fuente;
+    TTF_Font *_fuente;
 };

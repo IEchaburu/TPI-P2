@@ -25,8 +25,13 @@ void Juego::ejecutar()
         return;
     }
 
+    if(!cargarGraficos()){
+        cout << "Hay que ejecutar el juego desde la carpeta del proyecto (TPI-P2)." << endl;
+        return;
+    }
+
     /// DEMO PROVISORIA (adelanto del issue #9): un laberinto generado de verdad, dibujado
-    /// con rectangulos, y Teseo moviendose sin atravesar paredes. Enter genera otro y pasa
+    /// con sus imagenes, y Teseo moviendose sin atravesar paredes. Enter genera otro y pasa
     /// al tipo de piso siguiente. Se reemplaza en el paso 8 por el juego completo.
     GeneradorLaberinto generador;
     RegistroNivel receta;
@@ -88,6 +93,17 @@ void Juego::ejecutar()
 
         _pantalla.limpiar();
         dibujarLaberinto(*laberinto, teseo);
+
+        string tipoPiso = "COMBATE";
+        if(receta.getTipo() == TipoNivel::DESAFIO){
+            tipoPiso = "DESAFIO";
+        }
+        else if(receta.getTipo() == TipoNivel::JEFE){
+            tipoPiso = "JEFE";
+        }
+        _fuente.dibujar(_pantalla, "Piso: " + tipoPiso + "   Enter: otro laberinto   Esc: salir",
+                        MARGEN_X, MARGEN_Y + FILAS_LABERINTO * TAMANIO_CELDA + 16, 230, 220, 190);
+
         _pantalla.presentar();
     }
 
@@ -95,50 +111,52 @@ void Juego::ejecutar()
     _estado = EstadoJuego::FIN_PARTIDA;
 }
 
+bool Juego::cargarGraficos()
+{
+    /// en el mismo orden que el enum TipoCelda, asi el tipo sirve de indice
+    string nombresCeldas[CANTIDAD_TIPOS_CELDA] = {"pared", "piso", "entrada", "escalera", "cofre", "puerta"};
+
+    for(int i = 0; i < CANTIDAD_TIPOS_CELDA; i++){
+        string ruta = "images/celdas/" + nombresCeldas[i] + ".png";
+        if(!_spritesCeldas[i].cargar(_pantalla, ruta)){
+            cout << "No se pudo cargar " << ruta << endl;
+            return false;
+        }
+    }
+
+    if(!_spriteTeseo.cargar(_pantalla, "images/sprites/1.png")){
+        cout << "No se pudo cargar images/sprites/1.png" << endl;
+        return false;
+    }
+
+    if(!_fuente.abrir("fuentes/PressStart2P-Regular.ttf", 8)){
+        cout << "No se pudo abrir fuentes/PressStart2P-Regular.ttf" << endl;
+        return false;
+    }
+
+    return true;
+}
+
 void Juego::dibujarLaberinto(Laberinto &laberinto, Posicion posicionTeseo)
 {
+    int indicePiso = (int)TipoCelda::PISO;
+
     for(int f = 0; f < laberinto.getFilas(); f++){
         for(int c = 0; c < laberinto.getColumnas(); c++){
             int x = MARGEN_X + c * TAMANIO_CELDA;
             int y = MARGEN_Y + f * TAMANIO_CELDA;
             TipoCelda tipo = laberinto.getTipoCelda(Posicion(f, c));
 
-            if(tipo == TipoCelda::PARED){
-                /// bloque de piedra: borde oscuro y centro mas claro
-                _pantalla.dibujarRectangulo(x, y, TAMANIO_CELDA, TAMANIO_CELDA, 60, 52, 45);
-                _pantalla.dibujarRectangulo(x + 2, y + 2, TAMANIO_CELDA - 4, TAMANIO_CELDA - 4, 95, 84, 72);
-                continue;
+            /// todo lo que no es pared se apoya sobre el piso (el cofre tiene fondo transparente)
+            if(tipo != TipoCelda::PARED){
+                _spritesCeldas[indicePiso].dibujar(_pantalla, x, y);
             }
-
-            /// todo lo que no es pared se apoya sobre el piso
-            _pantalla.dibujarRectangulo(x, y, TAMANIO_CELDA, TAMANIO_CELDA, 32, 30, 28);
-
-            switch(tipo){
-                case TipoCelda::ENTRADA:
-                    _pantalla.dibujarRectangulo(x + 6, y + 6, TAMANIO_CELDA - 12, TAMANIO_CELDA - 12, 40, 120, 60);
-                    break;
-                case TipoCelda::ESCALERA:
-                    /// tres escalones
-                    for(int i = 0; i < 3; i++){
-                        _pantalla.dibujarRectangulo(x + 4 + i * 4, y + 6 + i * 8, TAMANIO_CELDA - 8 - i * 8, 5, 170, 170, 180);
-                    }
-                    break;
-                case TipoCelda::COFRE:
-                    _pantalla.dibujarRectangulo(x + 6, y + 9, TAMANIO_CELDA - 12, TAMANIO_CELDA - 16, 120, 70, 30);
-                    _pantalla.dibujarRectangulo(x + 6, y + 15, TAMANIO_CELDA - 12, 3, 220, 180, 50);
-                    break;
-                case TipoCelda::PUERTA:
-                    _pantalla.dibujarRectangulo(x + 2, y, TAMANIO_CELDA - 4, TAMANIO_CELDA, 110, 45, 30);
-                    _pantalla.dibujarRectangulo(x + 2, y + 13, TAMANIO_CELDA - 4, 5, 60, 25, 15);
-                    break;
-                default:
-                    break;
+            if(tipo != TipoCelda::PISO){
+                _spritesCeldas[(int)tipo].dibujar(_pantalla, x, y);
             }
         }
     }
 
-    /// Teseo: un cuadrado dorado sobre su celda
-    int x = MARGEN_X + posicionTeseo.getColumna() * TAMANIO_CELDA;
-    int y = MARGEN_Y + posicionTeseo.getFila() * TAMANIO_CELDA;
-    _pantalla.dibujarRectangulo(x + 7, y + 7, TAMANIO_CELDA - 14, TAMANIO_CELDA - 14, 230, 180, 40);
+    _spriteTeseo.dibujar(_pantalla, MARGEN_X + posicionTeseo.getColumna() * TAMANIO_CELDA,
+                         MARGEN_Y + posicionTeseo.getFila() * TAMANIO_CELDA);
 }

@@ -1,0 +1,11 @@
+Sprites: "Dungeon Crawl 32x32 tiles" (Dungeon Crawl Stone Soup)
+https://opengameart.org/content/dungeon-crawl-32x32-tiles
+Licencia: CC0 1.0 (dominio publico) - https://creativecommons.org/publicdomain/zero/1.0/
+
+celdas/  -> pared, piso, entrada, escalera, cofre, puerta
+sprites/ -> un archivo por idSprite (el campo idSprite de Enemigos.dat e Items.dat):
+   1 Teseo
+  10 Slime          11 Arania        12 Murcielago    13 Lobo         14 Ciclope
+  15 Esqueleto      16 Lobo feroz    17 Guardia       18 Minotauro
+  30 Espada         31 Botas         32 Carne         33 Capa         34 Hacha doble
+  35 Escudo         36 Ambrosia
