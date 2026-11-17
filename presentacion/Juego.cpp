@@ -34,6 +34,10 @@ const int LARGO_NOMBRE_JUGADOR = 19;  /// char[20] en RegistroJugador, menos el 
 const int ID_SPRITE_TESEO = 1;        /// el mismo que devuelve Personaje::getIdSprite
 const int ID_SPRITE_MINOTAURO = 18;   /// solo para la portada del menu
 
+/// los creditos (textos de pantalla sin tildes ni enie)
+const int CANTIDAD_INTEGRANTES = 3;
+const string INTEGRANTES[CANTIDAD_INTEGRANTES] = {"Inaki", "Joaquin", "Emi"};
+
 /// funciones auxiliares (no necesitan nada del Juego)
 
 /// dos posiciones pegadas en horizontal o vertical
@@ -53,6 +57,22 @@ string describirEfecto(Item *item)
         case TipoItem::CURACION: return " (cura " + poder + ")";
     }
     return "";
+}
+
+string textoResultado(ResultadoPartida resultado)
+{
+    switch(resultado){
+        case ResultadoPartida::VICTORIA: return "VICTORIA";
+        case ResultadoPartida::DERROTA:  return "DERROTA";
+        case ResultadoPartida::ABANDONO: return "ABANDONO";
+    }
+    return "?";
+}
+
+/// 7 -> "07", para las fechas
+string dosDigitos(int numero)
+{
+    return (numero < 10 ? "0" : "") + to_string(numero);
 }
 
 Fecha fechaDeHoy()
@@ -101,6 +121,7 @@ Juego::Juego() : _menuPrincipal(5), _menuPausa(2), _menuAcertijo(3)
     _duracionSegundos = 0;
     _esMejorPuntaje = false;
     _guardadoOk = false;
+    _cantidadRanking = 0;
 }
 
 Juego::~Juego()
@@ -226,10 +247,11 @@ void Juego::procesarMenu(Tecla tecla)
             administrar();
             break;
         case 3:
-            _estado = EstadoJuego::RANKING;          /// provisorio hasta el paso 10
+            cargarRanking();   /// una sola vez al entrar, no en cada dibujo
+            _estado = EstadoJuego::RANKING;
             break;
         case 4:
-            _estado = EstadoJuego::CREDITOS;         /// provisorio hasta el paso 10
+            _estado = EstadoJuego::CREDITOS;
             break;
         case 5:
             _salir = true;
@@ -321,6 +343,55 @@ void Juego::administrar()
     cout << "Volve a la ventana del juego." << endl;
     _pantalla.mostrar();
     _estado = EstadoJuego::MENU;
+}
+
+void Juego::cargarRanking()
+{
+    _cantidadRanking = 0;
+
+    ArchivoPartidas archivoPartidas;
+    int cantidad = archivoPartidas.getCantidadRegistros();
+    if(cantidad == 0){
+        return;
+    }
+
+    RegistroPartida *partidas = new RegistroPartida[cantidad];
+    if(partidas == nullptr){
+        return;
+    }
+    if(archivoPartidas.leerTodos(partidas, cantidad) != ArchivoError::OK){
+        delete [] partidas;
+        return;
+    }
+
+    /// de mayor a menor puntaje. Solo se intercambia si el de atras tiene MAS
+    /// puntos: en un empate no se mueven, asi queda primero la partida mas vieja
+    /// (el archivo esta en el orden en que se jugaron)
+    for(int i = 0; i < cantidad - 1; i++){
+        for(int j = 0; j < cantidad - 1 - i; j++){
+            if(partidas[j + 1].getPuntaje() > partidas[j].getPuntaje()){
+                RegistroPartida auxiliar = partidas[j];
+                partidas[j] = partidas[j + 1];
+                partidas[j + 1] = auxiliar;
+            }
+        }
+    }
+
+    /// las primeras, con el nombre de su jugador (relacion Partidas.idJugador -> Jugadores)
+    ArchivoJugadores archivoJugadores;
+    for(int i = 0; i < cantidad && i < CANTIDAD_RANKING; i++){
+        _ranking[i] = partidas[i];
+        int posicion = archivoJugadores.buscarByID(partidas[i].getIdJugador());
+        if(posicion != -1){
+            _nombresRanking[i] = archivoJugadores.leer(posicion).getNombre();
+        }
+        else{
+            _nombresRanking[i] = "(sin jugador)";
+        }
+        _cantidadRanking++;
+    }
+
+    delete [] partidas;
 }
 
 ///  partida
@@ -730,10 +801,10 @@ void Juego::dibujar()
             dibujarFinPartida();
             break;
         case EstadoJuego::RANKING:
-            dibujarProvisoria("RANKING");
+            dibujarRanking();
             break;
         case EstadoJuego::CREDITOS:
-            dibujarProvisoria("CREDITOS");
+            dibujarCreditos();
             break;
     }
 }
@@ -917,10 +988,83 @@ void Juego::dibujarFinPartida()
     dibujarCentrado(_fuente, "Enter: volver al menu", 520, 120, 110, 100);
 }
 
-void Juego::dibujarProvisoria(std::string titulo)
+void Juego::dibujarRanking()
 {
-    dibujarCentrado(_fuenteGrande, titulo, 200, 240, 200, 90);
-    dibujarCentrado(_fuente, "En construccion", 250, 220, 210, 200);
+    dibujarCentrado(_fuenteGrande, "RANKING", 50, 240, 200, 90);
+    dibujarCentrado(_fuente, "Las " + to_string(CANTIDAD_RANKING) + " mejores partidas", 80, 220, 210, 200);
+
+    if(_cantidadRanking == 0){
+        dibujarCentrado(_fuente, "Todavia no hay partidas", 240, 220, 210, 200);
+        dibujarCentrado(_fuente, "Enter o Esc: volver al menu", 520, 120, 110, 100);
+        return;
+    }
+
+    /// una columna por dato, cada una en una x fija
+    const int X_PUESTO = 40;
+    const int X_JUGADOR = 80;
+    const int X_PUNTAJE = 248;
+    const int X_RESULTADO = 330;
+    const int X_PISO = 440;
+    const int X_FECHA = 496;
+    const int ALTO_RENGLON = 26;
+
+    int y = 120;
+    _fuente.dibujar(_pantalla, "#", X_PUESTO, y, 150, 140, 130);
+    _fuente.dibujar(_pantalla, "JUGADOR", X_JUGADOR, y, 150, 140, 130);
+    _fuente.dibujar(_pantalla, "PUNTOS", X_PUNTAJE, y, 150, 140, 130);
+    _fuente.dibujar(_pantalla, "RESULTADO", X_RESULTADO, y, 150, 140, 130);
+    _fuente.dibujar(_pantalla, "PISO", X_PISO, y, 150, 140, 130);
+    _fuente.dibujar(_pantalla, "FECHA", X_FECHA, y, 150, 140, 130);
+    _pantalla.dibujarRectangulo(X_PUESTO, y + 14, ANCHO_VENTANA - 2 * X_PUESTO, 2, 150, 110, 50);
+
+    for(int i = 0; i < _cantidadRanking; i++){
+        y += ALTO_RENGLON;
+        RegistroPartida partida = _ranking[i];
+        Fecha fecha = partida.getFecha();
+
+        /// los tres primeros en dorado
+        int rojo = 220, verde = 210, azul = 200;
+        if(i < 3){
+            rojo = 240; verde = 200; azul = 90;
+        }
+
+        _fuente.dibujar(_pantalla, to_string(i + 1), X_PUESTO, y, rojo, verde, azul);
+        _fuente.dibujar(_pantalla, _nombresRanking[i], X_JUGADOR, y, rojo, verde, azul);
+        _fuente.dibujar(_pantalla, to_string(partida.getPuntaje()), X_PUNTAJE, y, rojo, verde, azul);
+        _fuente.dibujar(_pantalla, textoResultado(partida.getResultado()), X_RESULTADO, y, rojo, verde, azul);
+        _fuente.dibujar(_pantalla, to_string(partida.getNivelAlcanzado()), X_PISO, y, rojo, verde, azul);
+        _fuente.dibujar(_pantalla, dosDigitos(fecha.getDia()) + "/" + dosDigitos(fecha.getMes()) + "/"
+                        + to_string(fecha.getAnio()), X_FECHA, y, rojo, verde, azul);
+    }
+
+    dibujarCentrado(_fuente, "Enter o Esc: volver al menu", 520, 120, 110, 100);
+}
+
+void Juego::dibujarCreditos()
+{
+    dibujarCentrado(_fuenteGrande, "CREDITOS", 50, 240, 200, 90);
+    dibujarCentrado(_fuente, "El Laberinto del Minotauro", 90, 240, 235, 220);
+
+    dibujarCentrado(_fuente, "Programacion II - UTN FRGP", 130, 220, 210, 200);
+    dibujarCentrado(_fuente, "Tecnicatura Universitaria en Programacion", 148, 220, 210, 200);
+    dibujarCentrado(_fuente, "2026, segundo cuatrimestre - Comision Jueves Virtual", 166, 220, 210, 200);
+
+    int y = 206;
+    dibujarCentrado(_fuente, "INTEGRANTES", y, 240, 200, 90);
+    for(int i = 0; i < CANTIDAD_INTEGRANTES; i++){
+        y += 18;
+        dibujarCentrado(_fuente, INTEGRANTES[i], y, 240, 235, 220);
+    }
+
+    y += 40;
+    dibujarCentrado(_fuente, "RECURSOS", y, 240, 200, 90);
+    dibujarCentrado(_fuente, "Graficos: Dungeon Crawl 32x32 tiles", y + 18, 220, 210, 200);
+    dibujarCentrado(_fuente, "(OpenGameArt, licencia CC0)", y + 32, 150, 140, 130);
+    dibujarCentrado(_fuente, "Fuente: Press Start 2P", y + 54, 220, 210, 200);
+    dibujarCentrado(_fuente, "(SIL Open Font License 1.1)", y + 68, 150, 140, 130);
+    dibujarCentrado(_fuente, "Hecho con SDL 2, SDL_image y SDL_ttf", y + 90, 220, 210, 200);
+    dibujarCentrado(_fuente, "(licencia zlib)", y + 104, 150, 140, 130);
+
     dibujarCentrado(_fuente, "Enter o Esc: volver al menu", 520, 120, 110, 100);
 }
 

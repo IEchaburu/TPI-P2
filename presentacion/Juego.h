@@ -13,9 +13,11 @@
 #include "Item.h"
 #include "RegistroJugador.h"
 #include "RegistroNivel.h"
+#include "RegistroPartida.h"
 
 const int CANTIDAD_TIPOS_CELDA = 6;   /// PARED, PISO, ENTRADA, ESCALERA, COFRE, PUERTA
 const int CANTIDAD_SPRITES = 100;     /// images/sprites/<id>.png, con id de 0 a 99
+const int CANTIDAD_RANKING = 10;      /// las mejores partidas que se muestran
 
 /// Controlador principal: lleva el EstadoJuego y conecta menu, niveles, combate y dibujado.
 /// Cada vuelta del bucle: leer teclas -> procesarlas segun el estado -> dibujar el estado.
@@ -37,9 +39,13 @@ private:
     void procesarJugando(Tecla tecla);
     void procesarAcertijo(Tecla tecla);
     void procesarPausa(Tecla tecla);
-    void procesarVolverAlMenu(Tecla tecla);   /// fin de partida y pantallas provisorias
+    void procesarVolverAlMenu(Tecla tecla);   /// fin de partida, ranking y creditos
 
     void administrar();                       /// el ABM por consola, con la ventana oculta
+
+    /// lee Partidas.dat, las ordena por puntaje y se queda con las mejores (con el nombre
+    /// de cada jugador, de Jugadores.dat). Se llama al entrar al ranking, no en cada dibujo.
+    void cargarRanking();
 
     /// partida
     bool elegirPerfil();                      /// por consola, con la ventana oculta
@@ -66,7 +72,8 @@ private:
     void dibujarAcertijo();
     void dibujarPausa();
     void dibujarFinPartida();
-    void dibujarProvisoria(std::string titulo);
+    void dibujarRanking();
+    void dibujarCreditos();
 
     /// ayudas de dibujo
     void dibujarSprite(int idSprite, int x, int y);
@@ -112,4 +119,9 @@ private:
     int _duracionSegundos;
     bool _esMejorPuntaje;
     bool _guardadoOk;
+
+    /// el ranking (lo llena cargarRanking): vectores estaticos de tamanio constante
+    RegistroPartida _ranking[CANTIDAD_RANKING];
+    std::string _nombresRanking[CANTIDAD_RANKING]; /// el nombre del jugador de cada partida
+    int _cantidadRanking;                          /// cuantas hay (puede haber menos de 10)
 };
