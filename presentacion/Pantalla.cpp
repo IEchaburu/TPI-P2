@@ -80,6 +80,26 @@ void Pantalla::cerrar()
     }
 }
 
+void Pantalla::ocultar()
+{
+    if(_ventana != nullptr){
+        SDL_HideWindow(_ventana);
+    }
+}
+
+void Pantalla::mostrar()
+{
+    if(_ventana == nullptr){
+        return;
+    }
+    SDL_ShowWindow(_ventana);
+    SDL_RaiseWindow(_ventana);   /// al frente, para que reciba el teclado
+
+    /// las teclas que se apretaron mientras la ventana estaba oculta no son para el juego
+    SDL_PumpEvents();
+    SDL_FlushEvents(SDL_KEYDOWN, SDL_KEYUP);
+}
+
 void Pantalla::limpiar()
 {
     SDL_SetRenderDrawColor(_renderer, 0, 0, 0, 255);

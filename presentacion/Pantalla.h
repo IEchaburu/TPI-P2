@@ -16,6 +16,10 @@ public:
 
     bool iniciar(std::string titulo, int ancho, int alto);
 
+    /// mientras se escribe en la consola (perfil, ABM) la ventana se esconde
+    void ocultar();
+    void mostrar();               /// y descarta las teclas que quedaron pendientes
+
     void limpiar();               /// pinta todo de negro
     void presentar();             /// muestra lo dibujado desde el ultimo limpiar()
 
