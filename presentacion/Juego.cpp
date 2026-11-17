@@ -241,6 +241,9 @@ void Juego::procesarMenu(Tecla tecla)
             _aviso = "";
             if(elegirPerfil() && iniciarPartida()){
                 _estado = EstadoJuego::JUGANDO;
+                if(esPisoJefeSinJefe()){
+                    terminarPartida(ResultadoPartida::VICTORIA);
+                }
             }
             break;
         case 2:
@@ -720,7 +723,28 @@ void Juego::bajarPiso()
     if(!prepararPiso(receta)){
         terminarPartida(ResultadoPartida::ABANDONO);
         _aviso = "No se pudo armar el piso siguiente";
+        return;
     }
+
+    if(esPisoJefeSinJefe()){
+        terminarPartida(ResultadoPartida::VICTORIA);
+    }
+}
+
+bool Juego::esPisoJefeSinJefe()
+{
+    /// un piso JEFE no tiene escalera: si no hay jefe (lo dieron de baja en el ABM), Teseo
+    /// quedaria encerrado. Se gana al entrar, igual que cuando no hay piso siguiente.
+    if(_nivel->getTipo() != TipoNivel::JEFE){
+        return false;
+    }
+    for(int i = 0; i < _nivel->getCantidadEnemigos(); i++){
+        Enemigo *enemigo = _nivel->getEnemigo(i);
+        if(enemigo->estaVivo() && enemigo->getTipo() == TipoEnemigo::JEFE){
+            return false;
+        }
+    }
+    return true;
 }
 
 void Juego::terminarPartida(ResultadoPartida resultado)

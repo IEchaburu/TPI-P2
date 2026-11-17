@@ -58,6 +58,7 @@ private:
     void abrirAcertijo();
     void turnoEnemigos();
     void bajarPiso();
+    bool esPisoJefeSinJefe();                 /// arena sin jefe: no hay como salir (se gana)
     void terminarPartida(ResultadoPartida resultado);
     bool guardarPartida();                    /// alta en Partidas.dat y perfil actualizado
     void liberarPartida();

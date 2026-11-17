@@ -118,8 +118,8 @@ bool Nivel::ubicarEnemigos()
 
     if(_receta.getTipo() == TipoNivel::JEFE){
         /// el jefe solo, arriba al centro de la arena (la entrada esta abajo)
-        if(indiceJefe != -1){
-            Posicion lugar(1, _laberinto.getColumnas() / 2);
+        Posicion lugar = elegirLugarParaJefe();
+        if(indiceJefe != -1 && lugar.getFila() != -1){
             _enemigos[0] = crearEnemigo(registros[indiceJefe], lugar);
             _cantidadEnemigos = 1;
         }
@@ -304,6 +304,26 @@ Posicion Nivel::elegirLugarParaEnemigo()
         }
     }
     return Posicion(-1, -1);
+}
+
+Posicion Nivel::elegirLugarParaJefe()
+{
+    /// lo ideal: fila 1, columna del medio. Si ahi quedo un cofre, la celda de PISO mas
+    /// cercana: fila por fila desde arriba, y en cada fila del centro hacia los costados
+    int centro = _laberinto.getColumnas() / 2;
+    for(int f = 1; f < _laberinto.getFilas() - 1; f++){
+        for(int distancia = 0; distancia <= centro; distancia++){
+            Posicion derecha(f, centro + distancia);
+            Posicion izquierda(f, centro - distancia);
+            if(_laberinto.getTipoCelda(derecha) == TipoCelda::PISO){
+                return derecha;
+            }
+            if(_laberinto.getTipoCelda(izquierda) == TipoCelda::PISO){
+                return izquierda;
+            }
+        }
+    }
+    return Posicion(-1, -1);   /// arena sin PISO libre (todo cofres): el piso queda sin jefe
 }
 
 bool Nivel::puedeOcupar(Posicion destino, Posicion posicionJugador)

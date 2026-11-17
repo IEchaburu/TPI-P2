@@ -60,6 +60,9 @@ private:
     /// una celda de PISO libre y lejos de la entrada, elegida al azar; (-1,-1) si no hay
     Posicion elegirLugarParaEnemigo();
 
+    /// el jefe va arriba al centro de la arena; si ahi hay un cofre, al PISO mas cercano
+    Posicion elegirLugarParaJefe();
+
     /// un enemigo puede pararse ahi: PISO, sin otro enemigo y sin el jugador
     bool puedeOcupar(Posicion destino, Posicion posicionJugador);
 
