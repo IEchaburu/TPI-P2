@@ -39,7 +39,9 @@ private:
     void procesarPausa(Tecla tecla);
     void procesarVolverAlMenu(Tecla tecla);   /// fin de partida y pantallas provisorias
 
-    /// partida 
+    void administrar();                       /// el ABM por consola, con la ventana oculta
+
+    /// partida
     bool elegirPerfil();                      /// por consola, con la ventana oculta
     bool iniciarPartida();
     bool buscarPiso(int pisoAnterior, RegistroNivel &receta);   /// el siguiente de Niveles.dat

@@ -8,6 +8,7 @@
 #include "ArchivoJugadores.h"
 #include "ArchivoPartidas.h"
 #include "ArchivoNiveles.h"
+#include "MenuAdministracion.h"
 
 using namespace std;
 
@@ -184,6 +185,7 @@ void Juego::procesarTecla(Tecla tecla)
 
     switch(_estado){
         case EstadoJuego::MENU:
+        case EstadoJuego::ADMINISTRACION:   /// solo dura lo que tarda el ABM en la consola
             procesarMenu(tecla);
             break;
         case EstadoJuego::JUGANDO:
@@ -198,7 +200,6 @@ void Juego::procesarTecla(Tecla tecla)
             procesarPausa(tecla);
             break;
         case EstadoJuego::FIN_PARTIDA:
-        case EstadoJuego::ADMINISTRACION:
         case EstadoJuego::RANKING:
         case EstadoJuego::CREDITOS:
             procesarVolverAlMenu(tecla);
@@ -222,7 +223,7 @@ void Juego::procesarMenu(Tecla tecla)
             }
             break;
         case 2:
-            _estado = EstadoJuego::ADMINISTRACION;   /// provisorio hasta el paso 9
+            administrar();
             break;
         case 3:
             _estado = EstadoJuego::RANKING;          /// provisorio hasta el paso 10
@@ -308,7 +309,21 @@ void Juego::procesarVolverAlMenu(Tecla tecla)
     }
 }
 
-///  partida 
+void Juego::administrar()
+{
+    /// el ABM es por consola: mientras tanto la ventana no se ve
+    _estado = EstadoJuego::ADMINISTRACION;
+    _pantalla.ocultar();
+
+    MenuAdministracion administracion;
+    administracion.ejecutar();
+
+    cout << "Volve a la ventana del juego." << endl;
+    _pantalla.mostrar();
+    _estado = EstadoJuego::MENU;
+}
+
+///  partida
 
 bool Juego::elegirPerfil()
 {
@@ -698,6 +713,7 @@ void Juego::dibujar()
 {
     switch(_estado){
         case EstadoJuego::MENU:
+        case EstadoJuego::ADMINISTRACION:   /// la ventana esta oculta mientras dura el ABM
             dibujarMenu();
             break;
         case EstadoJuego::JUGANDO:
@@ -712,9 +728,6 @@ void Juego::dibujar()
             break;
         case EstadoJuego::FIN_PARTIDA:
             dibujarFinPartida();
-            break;
-        case EstadoJuego::ADMINISTRACION:
-            dibujarProvisoria("ADMINISTRACION");
             break;
         case EstadoJuego::RANKING:
             dibujarProvisoria("RANKING");
