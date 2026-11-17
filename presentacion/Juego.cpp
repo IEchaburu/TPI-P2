@@ -23,9 +23,9 @@ const int TAMANIO_FUENTE = 8;
 const int TAMANIO_FUENTE_GRANDE = 16;
 
 /// Teseo al empezar la partida
-const int VIDA_INICIAL = 30;
-const int ATAQUE_INICIAL = 5;
-const int DEFENSA_INICIAL = 2;
+const int VIDA_INICIAL = 40;
+const int ATAQUE_INICIAL = 6;
+const int DEFENSA_INICIAL = 3;
 
 const int CASTIGO_ACERTIJO = 5;       /// vida que cuesta responder mal
 const int PUNTOS_POR_PISO = 100;

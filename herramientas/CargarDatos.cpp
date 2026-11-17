@@ -111,14 +111,14 @@ int main()
 
     ArchivoEnemigos enemigos;
     ///                           nombre              tipo                vida at def  exp min max sprite
-    cargarEnemigo(enemigos, "Slime",             TipoEnemigo::COMUN,    8,  3,  0,  20, 1, 1, 10);
-    cargarEnemigo(enemigos, "Arania",            TipoEnemigo::COMUN,    6,  4,  1,  25, 1, 1, 11);
-    cargarEnemigo(enemigos, "Murcielago",        TipoEnemigo::COMUN,   10,  6,  1,  35, 2, 2, 12);
-    cargarEnemigo(enemigos, "Lobo",              TipoEnemigo::COMUN,   16,  7,  2,  45, 2, 3, 13);
-    cargarEnemigo(enemigos, "Ciclope",           TipoEnemigo::ELITE,   40, 10,  4, 120, 2, 2, 14);
-    cargarEnemigo(enemigos, "Esqueleto armado",  TipoEnemigo::COMUN,   22,  9,  4,  60, 3, 3, 15);
-    cargarEnemigo(enemigos, "Lobo feroz",        TipoEnemigo::COMUN,   24, 10,  3,  65, 3, 3, 16);
-    cargarEnemigo(enemigos, "Guardia acorazado", TipoEnemigo::COMUN,   30,  9,  7,  80, 3, 3, 17);
+    cargarEnemigo(enemigos, "Slime",             TipoEnemigo::COMUN,    6,  2,  0,  20, 1, 1, 10);
+    cargarEnemigo(enemigos, "Arania",            TipoEnemigo::COMUN,    5,  3,  1,  25, 1, 1, 11);
+    cargarEnemigo(enemigos, "Murcielago",        TipoEnemigo::COMUN,    8,  5,  1,  35, 2, 2, 12);
+    cargarEnemigo(enemigos, "Lobo",              TipoEnemigo::COMUN,   13,  6,  2,  45, 2, 3, 13);
+    cargarEnemigo(enemigos, "Ciclope",           TipoEnemigo::ELITE,   24,  8,  4, 120, 2, 2, 14);
+    cargarEnemigo(enemigos, "Esqueleto armado",  TipoEnemigo::COMUN,   18,  7,  4,  60, 3, 3, 15);
+    cargarEnemigo(enemigos, "Lobo feroz",        TipoEnemigo::COMUN,   19,  8,  3,  65, 3, 3, 16);
+    cargarEnemigo(enemigos, "Guardia acorazado", TipoEnemigo::COMUN,   24,  7,  7,  80, 3, 3, 17);
     cargarEnemigo(enemigos, "Minotauro",         TipoEnemigo::JEFE,    80, 14,  5,   0, 4, 4, 18);
 
     ArchivoItems items;
